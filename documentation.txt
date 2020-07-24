@@ -1,0 +1,192 @@
+CoE 1501 - Algorithms
+Project 3
+3/19/2016
+Dannah Gersh
+
+Documentation
+
+Car.java:
+	Car.java is the class defining the car objects. It allows the user to
+	store the VIN number, make, model, price, mileage, and color in one object
+	that defines the car. It also contains a variable called heaptype that allows
+	the user to define if this object will be in a heap sorted by price or one
+	sorted by mileage. The class contains the following methods:
+		- Contstructor one:
+			creates a car with all null entries in order to allow the user to
+			set the fields individually later on
+		- Constructor two:
+			creates a car based on information passed in by the user. All fields
+			will be set within the constructor.
+		-Setting methods:
+			- void setVIN(String myVIN)
+				allows the user to set the VIN number of a car outside the constructor
+			- void setMake(String myMake)
+				allows the user to set the make of a car outside the constructor
+			- void setModel(String myModel)
+				allows the user to set the model of a car outside the constructor
+			- void setPrice(double myPrice)
+				allows the user to set the price of a car outside the constructor
+			- void setMileage(double myMileage)
+				allows the user to set the mileage of a car outside the constructor
+			- void setColor(String myColor)
+				allows the user to set the color of a car outside the constructor
+			- void setHeapType(String myHeapType)
+				allows the user to set the heap type (by price or mileage) of a car outside the constructor
+		
+		-Getting methods
+			- String getVIN(String myVIN)
+				allows the user to view the VIN number of a car
+			- String getMake(String myMake)
+				allows the user to view the make of a car
+			- String getModel(String myModel)
+				allows the user to view the model of a car
+			- double getPrice(double myPrice)
+				allows the user to view the price of a car
+			- double getMileage(double myMileage)
+				allows the user to view the mileage of a car
+			- String getColor(String myColor)
+				allows the user to view the color of a car
+			- int getHeapType(String myHeapType)
+				allows the user to view the heap type (by price or mileage) of a car
+		-Compare methods
+			- boolean isEqual(Car c)
+				User can determine if all the fields of a given car are equal to that of another
+				if they are all equal, then it returns true, otherwise it returns false
+			- int compareToByPrice(Car c)
+				This method allow the user to compare two cars by price. If they cost the same
+				it will return 0, if the current car is greater than the car passed in for the
+				compare then it will return 1, and if it is less it will return -1
+			- int compareToByPrice(Car c)
+				This method allow the user to compare two cars by mileage. If they have the same
+				mileage it will return 0, if the current car is greater than the car passed in for the
+				compare then it will return 1, and if it is less it will return -1
+		
+CarHeap.java
+	CarHeap.java is an implementation of a min heap with indirection. The min heap is stored 
+	as an array of Car objects ordered by their indices. The indices are then stored with the
+	VIN numbers as the keys in a hash map, from the the java HashMap class. This method of storing
+	they keys for indirection was chosen based on our discussion in class about using a symbol table
+	for indirection. It is a good symbol table implementation because its constant runtime for the
+	get and put operations. CarHeap.java also stores the number of elements in the heap as "size" and
+	the max number of possible elements in the heap. Another feature of CarHeap is that it stores a type
+	variable that defines if it is a map that is sorted by the cars' prices or by the cars' mileages.
+	
+	-Constructors
+		The first constructor initializes a generic CarHeap of maxSize 100 and of the type (organized by price
+		or by mileage) as specified by the user.
+		The second constructor also take is the user's choice for the maxSize of the carHeap.
+	
+	-General methods
+		- boolean isEmpty()
+			Returns true if the number of elements (size) is zero
+		- int getSize()
+			returns the number of elements in the heap
+		- void insert(Car newC)
+			Checks if the car already exists in the heap using the VIN number, if it does not
+			then the Car is added to the array of cars that represents the heap. this adds it 
+			to the next open spot in the heap. It also then adds the car to the symbol table
+			with the VIN number as its key and the index as the value. When the car is first added
+			the value will be the last index in the heap, which is equal to the size of the heap before
+			the car was added. The index of the added car is then passed into the swim function (to be
+			explained in the Helper Functions section) and then the size is increased by 1.
+		- int getIndex(String myVIN)
+			Allows the user to find the index of a car in the heap based on its VIN number.
+			If the car is contained in the heap it will return the index of the car, if not
+			it will return -1. Can be used the same way as an exists function, if the return value
+			is -1 it does not exist in the heap, if it is anything else then it does exist.
+		- Car getMinCar()
+			allows the user to get the car at the lowest index of the heap, which is the car with either
+			the lowest price or lowest mileage depending on the type of the heap. If there are no items yet
+			in the heap it will return null.
+		- int deleteCar(String myVIN)
+			user can delete a car based on its VIN number. If there is no car with that vin number in the
+			heap then it will simply inform the user that no car has been found. If it does find the index
+			then it will exchange that Car with the Car in the highest index (at the lowest level and leftmost
+			position if visualizing a tree) which is at the last used entry in the array. The highest index
+			entry is now the car to be deleted from the heap and is removed. The Car that was moved up to the
+			previous index is then passed into the swim function, which will be explained later, and then into
+			the sink function, also to be explained later. The method returns 1 if it was successful and -1 if not.
+		- int updateColor(String myVIN, String myColor)
+			This retrieves the index of the car with the VIN number specified by the user. If the car exists
+			in the heap then the color is reset to the color entered by the user. No further action is necesary,
+			as the heap is not sorted by color.
+		- int updatePrice(String myVIN, double myPrice)
+			Retrieves the index of the car with the VIN number specified by the user. If the car exists in the
+			heap then the price is reset to the price entered by the user. The index of the car is then passed into
+			the swim function  and then the sink function in case its priority/position in the heap has changed. If
+			this was done successfully it will return the new index of the car, otherwise it will return -1.
+		- int updateMileage(String myVIN, double myMileage)
+			Retrieves the index of the car with the VIN number specified by the user. If the car exists in the
+			heap then the mileage is reset to the mileage entered by the user. The index of the car is then passed into
+			the swim function  and then the sink function in case its priority/position in the heap has changed. If
+			this was done successfully it will return the new index of the car, otherwise it will return -1.
+		- Car minByMakeModel(String myMake, String myModel)
+			The only other decent way I could think of to implement this was to create seperate heaps for every new entry
+			with a different make and model that had not been entered yet. The way I chose to implement it instead was by
+			simply iterating through every car in the heap and keeping track of the lowest price or mileage car of the specified
+			make and model seen so far. It would not be possible to simply stop at the first car of the user specified make
+			and model because the heap array is not necisarily sorted, though it is likely close to sorted, so all elements must 
+			be checked. This seemed like it would take up a lot of extra memory and that it wouldnt be worth the runtime savings 
+			on searching. This was especially the case considering that the user has to manually enter each car into the heap, so 
+			they would be unlikely to be entering enough cars to make a O(n) runtime problematic, which is what it would take to 
+			simply iterate through the entire heap.
+			Due to this logic I chose the iteration aproach with a O(n) runtime. Each time a car of that make or model is found it is
+			compared against the lowest price/mileage car of the same make and model that was previously found. If no car was previously found 
+			it will set that car as the lowest price car. If it has been previously found it will compare its price or mileage
+			with the current lowest. If it is smaller than that car is set as the new lowest. If no car of that make and model are 
+			found then it will return null.
+	
+	- Helper Methods
+		- void swim(int k)
+			as long as the index of the value is greater than 0 (which is the lowest possible index) and the Car at that index is greater
+			than the Car at the parent index, then the parent and the current car will be exchanged. The new index is that of the parent.
+			This continues until the Car is at the top of the heap or the parent is greater than the Car at the current index.
+		- void sink(int k)
+			This function checks the left and right children of the current index. If the right child is greater than the left child, compare
+			the parent to the left child, if it is less or equal compare it to the right child. If the the parent is greater than the specified
+			child, then exchange the parent and the child, moving the Car at the current index, the parent, down the heap. This continues until
+			the parent is not greater than either child or the Car is at the bottom level of the heap.
+		- booelan greater(int i, int j)
+			If the heap is organized by price (type = 1), then compare the car at position i to the car at position j by price.
+			If the heap is organized by mileage(type = 2), then compare the car at position i to the car at position j by mileage.
+			If the value returned by the compare is 1, than the car at index i is greater than the one at index j and the program returns true.
+			Otherwise it returns false.
+		- exch(int i, int j)
+			This method exchanges the spots of two cars in the heap. It sets the index in the symbol table for the car currently at index i to the
+			index of j and then sets the index in the symbol table of the car at j to the index of i. It then sets the car in the heap currently
+			at index i to the location of the car currently at index j, and then sets the car that was at j to the location of index i.
+			
+CarTracker.java
+	This is the main program of the project. It stores two CarHeaps, one organized by price, the other organized by mileage in order to easily search 
+	one or the other to find the car with the min price or min mileage. The user can select from a menu if they would like to add a car to the heap, 
+	delete one, update one, view the lowest price car, view the lowest mileage car, view the lowest price car of a specified make and model, or view 
+	the lowest mileage car of a specified make and model. Or quit. They must enter an integer 1-8 to select an option.
+	Option 1 - Add:
+		Prompts the user for the make, model, VIN number, price, mileage, and color of their car. It error check the VIN number to ensure that it is a valid VIN.
+		VIN requirements:
+			17 characters
+			All leters must be capitalized
+			must be unique
+			Cannot contain 'Q', 'O', or 'I'
+		It then adds the Car to both CarHeaps.
+	Option 2 - Delete:
+		Prompts the user for the VIN number of the car they want to delete. Validates that the VIN number is correct. See the Add function to for VIN requirements.
+		Deletes the Car with the user specified VIN number if it exists in the heap, from both heaps.
+	Option 3 - Update:
+		Prompts the user for the VIN number of the car they want to update. Validates VIN number, loops until a valid number is entered. See Add for requirements.
+		Then prompts the user to select whether they want to update the price, mileage, or color of the specified car. Car is not found it only displays that,
+		then returns to main menu. Asks the user for the new value for the specified field and updates it in both heaps.
+	Option 4 - Min Price:
+		Returns all information fields for the car at the lowest index of the price heap. This gives the user the car wit the lowest price.
+		If the heap is empty it tells the user.
+	Option 5 - Min Mileage:
+		Returns all information fields for the car at the lowest index of the mileage heap. This gives the user the car wit the lowest mileage.
+		If the heap is empty it tells the user.
+	Option 6 - Min Price by Make and Model:
+		Prompts the user to enter the make and model they want to search for. Finds the minimum by make and model of the price heap. Prints out the car details to the user.
+		If no cars of the specified make and model are found it informs the user.
+	Option 7 - Min Mileage by Make and Model:
+		Prompts the user to enter the make and model they want to search for. Finds the minimum by make and model of the mileage heap. Prints out the car details to the user.
+		If no cars of the specified make and model are found it informs the user.
+	Option 8 - Quit:
+		exits the program
